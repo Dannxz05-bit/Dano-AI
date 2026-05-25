@@ -31,7 +31,9 @@ if prompt := st.chat_input("Dano AI te escucha..."):
         try:
             # Respuesta directa y simple
             response = client.models.generate_content(
-                model='gemini-1.5-flash',
+                model='gemini-1.5-flash-latest', 
+                contents=f"Eres Dano AI, un asistente útil y profesional. Responde a esto: {prompt}"
+            ),
                 contents=f"Eres Dano AI, un asistente útil y profesional. Responde a esto: {prompt}"
             )
             full_response = response.text
