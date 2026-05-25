@@ -1,14 +1,13 @@
 import streamlit as st
 from google import genai
 
+# 1. Configuración
 st.set_page_config(page_title="Dano AI", page_icon="💠", layout="centered")
 
-# CSS para el fondo oscuro
 st.markdown("<style>.stApp { background-color: #000408; }</style>", unsafe_allow_html=True)
-
 st.title("💠 DANO AI - REACTOR UNIT")
 
-# CANVAS DE PARTÍCULAS (Potencia visual máxima)
+# 2. Reactor de Partículas (Canvas)
 st.components.v1.html("""
 <canvas id="canvas" style="width: 100%; height: 300px;"></canvas>
 <script>
@@ -40,21 +39,25 @@ animate();
 </script>
 """, height=300)
 
-# Lógica IA
+# 3. Lógica IA
 try:
     client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 except:
+    st.error("Error de API Key.")
     st.stop()
 
-if "messages" not in st.session_state: st.session_state.messages = []
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]): st.markdown(msg["content"])
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
 if prompt := st.chat_input("Dano AI escuchando..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"): st.markdown(prompt)
+    with st.chat_message("user"):
+        st.markdown(prompt)
     with st.chat_message("assistant"):
         response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
         st.markdown(response.text)
         st.session_state.messages.append({"role": "assistant", "content": response.text})
-""", unsafe_allow_html=True)
