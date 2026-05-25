@@ -1,10 +1,10 @@
 import streamlit as st
 import google.generativeai as genai
 
-# Configuración básica
+# 1. Configuración de página
 st.set_page_config(page_title="Dano AI", page_icon="💠", layout="centered")
 
-# Estilo visual sencillo y profesional
+# 2. CSS Estable y Seguro
 st.markdown("""
     <style>
     .stApp { background-color: #000408 !important; }
@@ -14,18 +14,19 @@ st.markdown("""
 
 st.title("💠 DANO AI - REACTOR UNIT")
 
-# Configuración de la IA
+# 3. Configuración de API
 api_key = st.secrets.get("GOOGLE_API_KEY")
 
 if not api_key:
     st.error("Error: GOOGLE_API_KEY no encontrada en los Secrets.")
     st.stop()
 
-# Configurar modelo de forma estándar
 genai.configure(api_key=api_key)
-model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Historial de mensajes
+# Usamos 'gemini-pro' que es más estable y compatible en Streamlit Cloud
+model = genai.GenerativeModel('gemini-pro')
+
+# 4. Lógica de Chat
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -33,7 +34,6 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Lógica del chat
 if prompt := st.chat_input("Dano AI escuchando..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -41,9 +41,8 @@ if prompt := st.chat_input("Dano AI escuchando..."):
     
     with st.chat_message("assistant"):
         try:
-            # Generar respuesta
             response = model.generate_content(prompt)
             st.markdown(response.text)
             st.session_state.messages.append({"role": "assistant", "content": response.text})
         except Exception as e:
-            st.error(f"Error de conexión con la IA: {e}")
+            st.error(f"Error técnico: {e}")
