@@ -35,7 +35,7 @@ if prompt := st.chat_input("Escribe tu consulta aquí..."):
     with st.chat_message("assistant"):
         try:
             response = client.models.generate_content(
-                model="gemini-1.5-flash",
+                model="gemini-2.0-flash",
                 contents=prompt,
             )
             reply = response.text
