@@ -12,13 +12,30 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# --- Función para cargar la esfera ---
-def load_lottie_url(url: str):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
+# --- Configuración de la Esfera Técnica ---
+url_esfera = "https://lottie.host/7e04f02f-b472-4d2d-9477-8025219277f0/BfBV6GvzpM.json"
+lottie_esfera = load_lottie_url(url_esfera)
 
+if lottie_esfera:
+    st_lottie(
+        lottie_esfera, 
+        speed=1, 
+        reverse=False, 
+        loop=True, 
+        quality="high", 
+        height=400, 
+        key="dano_sphere"
+    )
+st.markdown("""
+    <div style="background-color: rgba(0, 242, 255, 0.1); 
+                padding: 15px; 
+                border-radius: 10px; 
+                border: 1px solid #00f2ff;
+                text-align: center;">
+        <h4 style="color: #00f2ff;">ESTADO DEL NÚCLEO: ACTIVO</h4>
+        <p style="color: white; font-family: monospace;">SISTEMA ANALIZANDO CONSULTA...</p>
+    </div>
+""", unsafe_allow_html=True)
 # --- Interfaz del Reactor ---
 st.title("💠 DANO AI - REACTOR UNIT")
 
