@@ -1,48 +1,67 @@
-
+import streamlit as st
 from google import genai
 
-# 1. Configuración de página
+# 1. Configuración de página: Layout Wide
 st.set_page_config(page_title="Dano AI", page_icon="💠", layout="wide")
 
-# 2. CSS "Bomba Nuclear" (Fuerza el fondo y el Canvas al fondo de todo)
+# 2. CSS "Blindado": Estética oscura con resplandor neón
 st.markdown("""
     <style>
-    /* Fondo oscuro absoluto */
     .stApp { background-color: #000408 !important; }
     
-    /* El contenedor del canvas siempre al fondo */
-    #background-canvas {
-        position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        z-index: -1 !important;
-        background-color: #000408 !important;
+    /* Reactor central optimizado para no fallar */
+    .reactor {
+        width: 250px; height: 250px;
+        margin: 50px auto;
+        border-radius: 50%;
+        border: 4px solid #00f2ff;
+        box-shadow: 0 0 60px #00f2ff, inset 0 0 30px #00f2ff;
+        display: flex; align-items: center; justify-content: center;
+        animation: pulse 3s infinite ease-in-out;
     }
     
-    .chat-container { 
-        position: relative; z-index: 1; 
-        max-width: 800px; margin: auto;
-        padding-top: 100px;
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 60px #00f2ff; }
+        50% { transform: scale(1.05); box-shadow: 0 0 90px #00f2ff; }
     }
-    h1 { color: #00f2ff; text-align: center; }
+    
+    h1 { color: #00f2ff; text-align: center; font-family: 'monospace'; }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Canvas forzado
-st.components.v1.html("""
-<canvas id="background-canvas"></canvas>
-<script>
-const canvas = document.getElementById('background-canvas');
-const ctx = canvas.getContext('2d');
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-window.addEventListener('resize', resize);
-resize();
+# 3. Interfaz
+st.title("💠 DANO AI - REACTOR UNIT")
 
-let particles = [];
-class Particle {
-    constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() *
+# Reactor CSS (100% estable)
+st.markdown('<div class="reactor"></div>', unsafe_allow_html=True)
+
+# 4. Lógica de Chat
+try:
+    client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
+except Exception:
+    st.error("Error: API KEY no detectada.")
+    st.stop()
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+if prompt := st.chat_input("Dano AI escuchando..."):
+    st.session_state.messages.append({"role": "user", "content": prompt})
+    with st.chat_message("user"):
+        st.markdown(prompt)
+
+    with st.chat_message("assistant"):
+        try:
+            response = client.models.generate_content(
+                model='gemini-1.5-flash',
+                contents=prompt
+            )
+            reply = response.text
+            st.markdown(reply)
+            st.session_state.messages.append({"role": "assistant", "content": reply})
+        except Exception:
+            st.error("Error al procesar la respuesta.")
