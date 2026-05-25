@@ -22,7 +22,7 @@ st.write("---")
 # Inicializar la API de Google
 client = genai.Client(api_key="AIzaSyC_OTzhvhrbi3q84JhmHOS0kqLL14VSWQc")
 # ¡Aquí le cambiamos la personalidad!
-instrucciones = "Eres Skibidi, el asistente de Inteligencia Artificial de Daniel. Responde siempre en español latino, sé muy divertido, buena onda y usa palabras graciosas de la cultura de internet si viene al caso."
+instrucciones = "Eres Dano, el asistente de Inteligencia Artificial del usuario. Responde siempre en español latino, sé muy divertido, buena onda y usa palabras graciosas de la cultura de internet si viene al caso."
 
 # FUNCIÓN DE VOZ
 def hablar(texto):
