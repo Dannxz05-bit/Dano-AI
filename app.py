@@ -4,32 +4,41 @@ from google import genai
 # 1. Configuración de página
 st.set_page_config(page_title="Dano AI", page_icon="💠", layout="centered")
 
-# 2. CSS Estético: Estilo "Dark Reactor"
+# 2. CSS Estético: Animación de giro para la imagen
 st.markdown("""
     <style>
     .stApp { background-color: #000408; }
-    h1 { color: #00f2ff; text-align: center; font-family: 'monospace'; margin-bottom: 20px; }
-    /* Contenedor del chat */
-    .stChatInput { border: 1px solid #00f2ff !important; border-radius: 5px; }
+    h1 { color: #00f2ff; text-align: center; font-family: 'monospace'; }
+    
+    @keyframes girar {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .reactor-img {
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        animation: girar 10s linear infinite;
+        box-shadow: 0 0 50px #00f2ff;
+        border: 2px solid #00f2ff;
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Encabezado
 st.title("💠 DANO AI - REACTOR UNIT")
 
-# 4. Esfera Técnica (Círculo perfecto con brillo neón)
+# 3. Reactor (Usando una imagen más densa y técnica)
 st.markdown("""
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
-        <img src="https://i.pinimg.com/originals/4f/f0/65/4ff0650a75cd3cfaf6c6b713391588ab.gif" 
-             style="width: 250px; height: 250px; border-radius: 50%; box-shadow: 0 0 40px #00f2ff; border: 2px solid #00f2ff;">
+    <div style="display: flex; justify-content: center; margin-top: 20px; margin-bottom: 30px;">
+        <img src="https://i.pinimg.com/564x/e7/8a/a5/e78aa5a2041703e29f34546419a4a753.jpg" class="reactor-img">
     </div>
 """, unsafe_allow_html=True)
 
-# 5. Lógica del Chat
+# 4. Lógica IA
 try:
     client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 except:
-    st.error("Error: GOOGLE_API_KEY no detectada.")
     st.stop()
 
 if "messages" not in st.session_state:
@@ -46,12 +55,9 @@ if prompt := st.chat_input("Dano AI escuchando..."):
 
     with st.chat_message("assistant"):
         try:
-            response = client.models.generate_content(
-                model='gemini-1.5-flash',
-                contents=prompt
-            )
+            response = client.models.generate_content(model='gemini-1.5-flash', contents=prompt)
             reply = response.text
             st.markdown(reply)
             st.session_state.messages.append({"role": "assistant", "content": reply})
         except:
-            st.error("Sistema ocupado. Intenta de nuevo.")
+            st.error("Error de sistema.")
