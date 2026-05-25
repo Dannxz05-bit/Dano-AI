@@ -1,3 +1,4 @@
 streamlit
 google-genai
-pyttsx3
+streamlit-lottie
+requests
