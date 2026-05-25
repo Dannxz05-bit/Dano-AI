@@ -4,42 +4,41 @@ from google import genai
 # 1. Configuración de página
 st.set_page_config(page_title="Dano AI", page_icon="💠", layout="centered")
 
-# 2. Diseño visual estilo JARVIS
+# 2. CSS Estético: Estilo "Dark Reactor"
 st.markdown("""
     <style>
-    .stApp { background-color: #000408; color: white; }
-    h1 { color: #00f2ff; text-align: center; font-family: 'Courier New', monospace; text-shadow: 0 0 15px #00f2ff; }
-    .stChatInput { border: 2px solid #00f2ff !important; border-radius: 10px; }
+    .stApp { background-color: #000408; }
+    h1 { color: #00f2ff; text-align: center; font-family: 'monospace'; margin-bottom: 20px; }
+    /* Contenedor del chat */
+    .stChatInput { border: 1px solid #00f2ff !important; border-radius: 5px; }
     </style>
-    """, unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
+# 3. Encabezado
 st.title("💠 DANO AI - REACTOR UNIT")
 
-# 3. Esfera Técnica (GIF optimizado)
+# 4. Esfera Técnica (Círculo perfecto con brillo neón)
 st.markdown("""
-    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 25px;">
+    <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 30px;">
         <img src="https://i.pinimg.com/originals/4f/f0/65/4ff0650a75cd3cfaf6c6b713391588ab.gif" 
-             width="300" 
-             style="border-radius: 50%; border: 3px solid #00f2ff; box-shadow: 0 0 25px #00f2ff;">
+             style="width: 250px; height: 250px; border-radius: 50%; box-shadow: 0 0 40px #00f2ff; border: 2px solid #00f2ff;">
     </div>
 """, unsafe_allow_html=True)
 
-# 4. Lógica de la IA
+# 5. Lógica del Chat
 try:
     client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
 except:
-    st.error("Error: Configura tu GOOGLE_API_KEY en los Secrets de Streamlit.")
+    st.error("Error: GOOGLE_API_KEY no detectada.")
     st.stop()
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Historial de chat
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Entrada del usuario
 if prompt := st.chat_input("Dano AI escuchando..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
@@ -54,5 +53,5 @@ if prompt := st.chat_input("Dano AI escuchando..."):
             reply = response.text
             st.markdown(reply)
             st.session_state.messages.append({"role": "assistant", "content": reply})
-        except Exception as e:
-            st.error("Cuota temporal agotada. Espera un momento.")
+        except:
+            st.error("Sistema ocupado. Intenta de nuevo.")
