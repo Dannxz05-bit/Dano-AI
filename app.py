@@ -1,4 +1,4 @@
-import streamlit as st
+
 from google import genai
 
 # 1. Configuración de página
@@ -45,27 +45,4 @@ class Particle {
     constructor() {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-    }
-    update() { this.x += this.speedX; this.y += this.speedY; }
-    draw() { ctx.fillStyle = '#00f2ff'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); }
-}
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if(particles.length < 100) particles.push(new Particle());
-    particles.forEach((p, i) => {
-        p.update(); p.draw();
-        if(p.x < 0 || p.x > canvas.width || p.y < 0 || p.y > canvas.height) particles.splice(i, 1);
-    });
-    requestAnimationFrame(animate);
-}
-animate();
-</script>
-""", height=0)
-
-# 4. Chat
-st.markdown('<div class="chat-container">', unsafe_allow_html=True)
-st.title("💠 DANO AI - REACTOR UNIT")
-# ... (resto de tu lógica de chat igual que antes)
+        this.size = Math.random() *
