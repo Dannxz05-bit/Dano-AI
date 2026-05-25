@@ -1,43 +1,47 @@
 import streamlit as st
 from google import genai
 
-# Título y configuración
+# Page Configuration
 st.set_page_config(page_title="Dano AI", page_icon="💠")
 st.title("💠 Dano AI")
 
-# Configuración de la API desde los Secrets
-try:
-    api_key = st.secrets["GOOGLE_API_KEY"]
-    client = genai.Client(api_key=api_key)
-except Exception as e:
-    st.error("Error al cargar la API KEY desde los Secrets.")
+# Retrieve API Key from Streamlit Secrets
+api_key = st.secrets.get("GOOGLE_API_KEY")
+
+if not api_key:
+    st.error("Error: GOOGLE_API_KEY no encontrada en los Secrets de Streamlit.")
     st.stop()
 
-# Historial del chat
+# Initialize Client
+client = genai.Client(api_key=api_key)
+
+# Initialize Chat History
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Display Chat History
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Interacción
-if prompt := st.chat_input("Dano AI te escucha..."):
+# Handle Chat Input
+if prompt := st.chat_input("Escribe tu consulta aquí..."):
+    # Append User Message
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
+    # Generate Response
     with st.chat_message("assistant"):
         try:
-            # Respuesta directa y simple
             response = client.models.generate_content(
-                model='gemini-1.5-flash-latest', 
-                contents=f"Eres Dano AI, un asistente útil y profesional. Responde a esto: {prompt}"
-            ),
-                contents=f"Eres Dano AI, un asistente útil y profesional. Responde a esto: {prompt}"
+                model="gemini-1.5-flash",
+                contents=prompt,
             )
-            full_response = response.text
-            st.markdown(full_response)
-            st.session_state.messages.append({"role": "assistant", "content": full_response})
+            reply = response.text
+            st.markdown(reply)
+            
+            # Append Assistant Response
+            st.session_state.messages.append({"role": "assistant", "content": reply})
         except Exception as e:
-            st.error(f"Error técnico: {e}")
+            st.error(f"Error de conexión con Gemini: {e}")
