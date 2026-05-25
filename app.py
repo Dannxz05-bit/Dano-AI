@@ -15,7 +15,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🚽 SKIBIDI AI")
+st.title("💠 Dano AI")
 st.subheader("El asistente más insano de Daniel")
 st.write("---")
 
