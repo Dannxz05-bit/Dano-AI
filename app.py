@@ -1,47 +1,47 @@
 import streamlit as st
 from google import genai
 
-# Page Configuration
+# Configuración visual "Dark Mode" estilo JARVIS
 st.set_page_config(page_title="Dano AI", page_icon="💠")
-st.title("💠 Dano AI")
+st.markdown("""
+    <style>
+    .stApp { background-color: #000408; }
+    h1 { color: #00f2ff; text-align: center; }
+    </style>
+    """, unsafe_allow_html=True)
 
-# Retrieve API Key from Streamlit Secrets
-api_key = st.secrets.get("GOOGLE_API_KEY")
+st.title("💠 DANO AI - REACTOR UNIT")
 
-if not api_key:
-    st.error("Error: GOOGLE_API_KEY no encontrada en los Secrets de Streamlit.")
+# Configuración del cliente
+try:
+    client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
+except:
+    st.error("Error: Configura tu API KEY en los Secrets.")
     st.stop()
 
-# Initialize Client
-client = genai.Client(api_key=api_key)
-
-# Initialize Chat History
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Display Chat History
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+# Mostrar historial
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
 
-# Handle Chat Input
-if prompt := st.chat_input("Escribe tu consulta aquí..."):
-    # Append User Message
+# Entrada de usuario
+if prompt := st.chat_input("Dano AI escuchando..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate Response
     with st.chat_message("assistant"):
         try:
+            # Usamos gemini-1.5-flash que es el más estable para evitar errores 429 constantes
             response = client.models.generate_content(
-                model="gemini-2.0-flash",
-                contents=prompt,
+                model='gemini-1.5-flash',
+                contents=prompt
             )
             reply = response.text
             st.markdown(reply)
-            
-            # Append Assistant Response
             st.session_state.messages.append({"role": "assistant", "content": reply})
         except Exception as e:
-            st.error(f"Error de conexión con Gemini: {e}")
+            st.error("Error: Cuota temporalmente agotada. Espera unos minutos.")
