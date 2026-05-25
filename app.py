@@ -50,7 +50,7 @@ if pregunta := st.chat_input("Dano AI te escucha..."):
     # Generar respuesta
     try:
         response = client.models.generate_content(
-            model='gemini-2.5-flash',
+            model='gemini-1.5-flash',
             contents=pregunta,
             config=types.GenerateContentConfig(system_instruction=instrucciones)
         )
