@@ -1,47 +1,31 @@
 import streamlit as st
 from google import genai
+import os
 
-# 1. Configuración de página: Layout Wide
-st.set_page_config(page_title="Dano AI", page_icon="💠", layout="wide")
+# 1. Configuración de página
+st.set_page_config(page_title="Dano AI", page_icon="💠", layout="centered")
 
-# 2. CSS "Blindado": Estética oscura con resplandor neón
+# 2. CSS Estable (Sin componentes externos)
 st.markdown("""
     <style>
     .stApp { background-color: #000408 !important; }
-    
-    /* Reactor central optimizado para no fallar */
-    .reactor {
-        width: 250px; height: 250px;
-        margin: 50px auto;
-        border-radius: 50%;
-        border: 4px solid #00f2ff;
-        box-shadow: 0 0 60px #00f2ff, inset 0 0 30px #00f2ff;
-        display: flex; align-items: center; justify-content: center;
-        animation: pulse 3s infinite ease-in-out;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); box-shadow: 0 0 60px #00f2ff; }
-        50% { transform: scale(1.05); box-shadow: 0 0 90px #00f2ff; }
-    }
-    
-    h1 { color: #00f2ff; text-align: center; font-family: 'monospace'; }
+    h1 { color: #00f2ff !important; text-align: center; }
+    .stChatMessage { border: 1px solid #00f2ff !important; background: #010a12 !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# 3. Interfaz
 st.title("💠 DANO AI - REACTOR UNIT")
 
-# Reactor CSS (100% estable)
-st.markdown('<div class="reactor"></div>', unsafe_allow_html=True)
+# 3. Configuración de API (Verificación simple)
+api_key = st.secrets.get("GOOGLE_API_KEY")
 
-# 4. Lógica de Chat
-try:
-    client = genai.Client(api_key=st.secrets["GOOGLE_API_KEY"])
-except Exception:
-    st.error("Error: API KEY no detectada.")
+if not api_key:
+    st.error("Error: No se encontró GOOGLE_API_KEY en los secretos.")
     st.stop()
 
+client = genai.Client(api_key=api_key)
+
+# 4. Lógica de Chat
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -56,12 +40,13 @@ if prompt := st.chat_input("Dano AI escuchando..."):
 
     with st.chat_message("assistant"):
         try:
+            # Usamos gemini-1.5-flash
             response = client.models.generate_content(
-                model='gemini-1.5-flash',
+                model='gemini-1.5-flash', 
                 contents=prompt
             )
             reply = response.text
             st.markdown(reply)
             st.session_state.messages.append({"role": "assistant", "content": reply})
-        except Exception:
-            st.error("Error al procesar la respuesta.")
+        except Exception as e:
+            st.error(f"Error técnico: {e}")
